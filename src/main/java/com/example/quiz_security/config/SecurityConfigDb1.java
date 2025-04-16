@@ -41,7 +41,9 @@ public class SecurityConfigDb1 {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         System.out.println("Security config loaded!");
-        http.csrf(e->e.disable())
+        http
+                .cors(Customizer.withDefaults())
+                .csrf(e->e.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register", "/login").permitAll()
                         .requestMatchers("/api/save").hasRole("ADMIN")

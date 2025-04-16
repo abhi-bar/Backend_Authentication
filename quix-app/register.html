@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz Registration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="quiz-header">
+        <h1 class="heading">Quiz Security Registration</h1>
+    </div>
+
+    <nav class="main-nav">
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+    </nav>
+
+    <div class="auth-container">
+        <h2>Create Account</h2>
+        <form id="registerForm" class="auth-form">
+            <input type="email" id="email" class="auth-input" placeholder="Email" required>
+            <input type="password" id="password" class="auth-input" placeholder="Password" required>
+            <button type="submit" class="auth-button">
+                <span class="button-text">Register</span>
+                <div class="loading-spinner"></div>
+            </button>
+        </form>
+        <p class="auth-link">Already have an account? <a href="login.html">Login here</a></p>
+        <div id="errorMessage" class="error"></div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const button = form.querySelector('button');
+            const spinner = form.querySelector('.loading-spinner');
+            const buttonText = form.querySelector('.button-text');
+            
+            button.disabled = true;
+            buttonText.textContent = 'Registering...';
+            spinner.style.display = 'inline-block';
+    
+            try {
+                // 1. Register user
+                await fetch('http://localhost:8080/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value,
+                        password: document.getElementById('password').value,
+                        role: "R"
+                    })
+                });
+    
+                // 2. Auto-login after successful registration
+                const loginResponse = await fetch('http://localhost:8080/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value,
+                        password: document.getElementById('password').value
+                    })
+                });
+    
+                if (loginResponse.ok) {
+                    const { token } = await loginResponse.json();
+                    localStorage.setItem('jwtToken', token);
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                document.getElementById('errorMessage').textContent = 'Registration failed. Please try again.';
+            } finally {
+                button.disabled = false;
+                buttonText.textContent = 'Register';
+                spinner.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
