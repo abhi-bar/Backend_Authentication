@@ -49,6 +49,8 @@ public class JwtFilter extends OncePerRequestFilter {
             System.out.println("Username is : "+username);
         }
 
+//        ensures that no authentication is already set in the SecurityContextHolder.
+//        This avoids re-authenticating for already authenticated requests (important in stateless systems).
         if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
             UserDetails userDetails = userLoginService.loadUserByUsername(username);
             if(jwtutil.isTokenValid(token,userDetails)){
