@@ -33,11 +33,13 @@ public class SecurityConfigDb1 {
     @Autowired
     private PassConfig passConfig;
 
+//    it's required only if you manually invoke authentication, which is common when you're issuing JWTs in a /login controller.
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+//    cors(Customizer.withDefaults() -> required for getting the Cors property we set in WebConfig
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         System.out.println("Security config loaded!");
